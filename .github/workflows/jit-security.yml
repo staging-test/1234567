@@ -5,6 +5,11 @@ on:
        client_payload:
           description: The Client payload
           required: true
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   enrich:
     if: fromJSON(github.event.inputs.client_payload).payload.workflow_job_name == 'enrich' && fromJSON(github.event.inputs.client_payload).payload.workflow_slug == 'workflow-enrichment-code'
@@ -31,7 +36,7 @@ jobs:
       with:
         docker_user: jit-bot
         docker_password: ${{fromJSON(github.event.inputs.client_payload).payload.container_registry_token}}
-        security_control: registry.jit.io/control-gitleaks-alpine:latest
+        security_control: registry.jit.io/control-gitleaks-alpine:main
         security_control_output_file: /tmp/report.json
         dispatch_type: workflow
         context: ${{toJSON(fromJSON(github.event.inputs.client_payload).context)}}
